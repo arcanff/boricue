@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("./partials/dashHead.ejs"); %>
+
+<body>
+
+    <%- include("./partials/dashMenu.ejs"); %>
+
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-image">
+                <img src="images/sena.jpg" alt="Imagen de Usuario">
+            </div>
+            <div class="profile-info">
+                <div class="profile-name">Nombre de Usuario: Emanuel Gomez Diaz</div>
+                <div class="profile-description">Descripción del Usuario: Soy el representante de una empresa llamada EmanuelSAS</div>
+                <div class="profile-location">Ubicación del Usuario: Envigado</div>
+                <div class="profile-company">Nombre de la Empresa: Emanuel SAS</div>
+                <div class="profile-company">Numero de contacto: 3136640809</div>
+                <div class="profile-company">Correo de contacto: egomez@sena.edu.co</div>
+                <div class="profile-buttons">
+                    <button class="btn btn-info"><a class="cart" href="/Reportes">Generar Reporte</a></button>
+                    <button class="btn btn-info"><a class="cart" href="/EditarPerfil">Editar Perfil</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include("./partials/dashFooter.ejs"); %>
+
+</body>
+</html>
