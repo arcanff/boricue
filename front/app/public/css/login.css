@@ -187,3 +187,10 @@ main{
         position: relative;
     }
 }
+
+/* sing up mail extension error mssg */
+
+.error-message {
+    color: red;
+    display: none;
+}

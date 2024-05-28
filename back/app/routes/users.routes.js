@@ -24,5 +24,8 @@ router.put('/user/:idusuario', controller.updateUser);
 // Ruta para eliminar un usuario específico por su ID
 router.delete('/user/:idusuario', controller.deleteUser);
 
+// Ruta para verificar la existencia de correo, identificación o teléfono
+router.get('/user/check', controller.checkIfExists);
+
 // Exporta el enrutador como el valor predeterminado del módulo
 export default router;

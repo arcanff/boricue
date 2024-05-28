@@ -3,11 +3,15 @@ import path from 'path';
 import colors from 'colors';
 import { fileURLToPath } from 'url';
 import homeRoutes from './routes/routes.js'; // Cambia la ruta de importación
-
+import bodyParser from 'body-parser';
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Middleware para parsear el cuerpo de las solicitudes
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Configurar el motor de plantillas EJS
 app.set('view engine', 'ejs');

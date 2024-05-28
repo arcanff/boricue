@@ -62,3 +62,105 @@ anchoPage();
             caja_trasera_login.style.opacity = "1";
         }
 }
+
+
+// error message
+
+document.querySelector('.formulario__register').addEventListener('submit', async function (e) {
+    e.preventDefault(); // Prevenir el envío del formulario
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const data = {
+        id: formData.get('id'),
+        names: formData.get('names'),
+        dress: formData.get('dress'),
+        phone: formData.get('phone'),
+        mail: formData.get('mail'),
+        pass: formData.get('pass'),
+        rol: formData.get('rol')
+    };
+
+    try {
+        const response = await fetch('/singup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            showError(errorMessage);
+        } else {
+            window.location.href = '/login'; // Redirigir en caso de éxito
+        }
+    } catch (error) {
+        showError('Ocurrió un error al enviar el formulario.');
+    }
+});
+
+function showError(message) {
+    const errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.textContent = message;
+    errorMessageDiv.style.display = 'block';
+    setTimeout(() => {
+        errorMessageDiv.style.display = 'none';
+    }, 2000);
+}
+
+
+const validEmailExtensions = ['@gmail.com', '@hotmail.com', '@misena.edu.co', '@soy.sena.edu.co'];
+
+        document.getElementById('register-form').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevenir el envío del formulario
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            const data = {
+                id: formData.get('id'),
+                names: formData.get('names'),
+                dress: formData.get('dress'),
+                phone: formData.get('phone'),
+                mail: formData.get('mail'),
+                pass: formData.get('pass'),
+                rol: formData.get('rol')
+            };
+
+            // Validar la extensión del correo
+            if (!validEmailExtensions.some(ext => data.mail.endsWith(ext))) {
+                showError('Correo no válido. Use una extensión válida como @gmail.com, @hotmail.com, @misena.edu.co, @soy.sena.edu.co.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/singup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorMessage = await response.text();
+                    showError(errorMessage);
+                } else {
+                    window.location.href = '/'; // Redirigir en caso de éxito
+                }
+            } catch (error) {
+                showError('Ocurrió un error al enviar el formulario.');
+            }
+        });
+
+        function showError(message) {
+            const errorMessageDiv = document.getElementById('error-message');
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.style.display = 'block';
+            setTimeout(() => {
+                errorMessageDiv.style.display = 'none';
+            }, 6000);
+        }

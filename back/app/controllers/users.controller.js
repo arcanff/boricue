@@ -126,6 +126,39 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const checkIfExists = async (req, res) => {
+    try {
+        const { correo, identificacion, telefono } = req.query;
+
+        let query = '';
+        let param = '';
+
+        if (correo) {
+            query = 'SELECT COUNT(*) as count FROM usuario WHERE correo = ?';
+            param = correo;
+        } else if (identificacion) {
+            query = 'SELECT COUNT(*) as count FROM usuario WHERE identificacion = ?';
+            param = identificacion;
+        } else if (telefono) {
+            query = 'SELECT COUNT(*) as count FROM usuario WHERE telefono = ?';
+            param = telefono;
+        }
+
+        if (query) {
+            const [rows] = await pool.query(query, [param]);
+            const exists = rows[0].count > 0;
+            res.json({ exists });
+        } else {
+            res.status(400).send('Consulta inválida');
+        }
+    } catch (error) {
+        console.error('Error al verificar existencia:', error.message);
+        message(error.message, "danger");
+        res.status(500).send(error.message);
+    }
+};
+
+
 export {
-    createUser, findAllUsers, findOneUser, pingUser, updateUser, deleteUser
+    createUser, findAllUsers, findOneUser, pingUser, updateUser, deleteUser, checkIfExists
 };
