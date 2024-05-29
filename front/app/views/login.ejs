@@ -26,11 +26,12 @@
                 <!--Formulario de Login y registro-->
                 <div class="contenedor__login-register">
                     <!--Login-->
-                    <form action="/login" class="formulario__login">
+                    <form class="formulario__login" id="login-form">
                         <h2>Iniciar Sesión</h2>
-                        <input type="text" name="email" placeholder="Correo Electronico">
-                        <input type="password" name="password" placeholder="Contraseña">
-                        <button>Entrar</button>
+                        <input type="text" name="email" placeholder="Correo Electrónico" required>
+                        <input type="password" name="password" placeholder="Contraseña" required>
+                        <button type="submit">Entrar</button>
+                        <div class="error-message" id="error-message"></div>
                     </form>
 
                     <!--Register-->
@@ -57,4 +58,5 @@
         <%- include("./partials/footer.ejs"); %>
     </body>
     <script src="/js/login.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </html>

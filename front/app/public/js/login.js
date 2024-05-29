@@ -65,8 +65,9 @@ anchoPage();
 
 
 // error message
+const validEmailExtensions = ['@gmail.com', '@hotmail.com', '@misena.edu.co', '@soy.sena.edu.co'];
 
-document.querySelector('.formulario__register').addEventListener('submit', async function (e) {
+document.getElementById('register-form').addEventListener('submit', async function (e) {
     e.preventDefault(); // Prevenir el envío del formulario
 
     const form = e.target;
@@ -82,6 +83,12 @@ document.querySelector('.formulario__register').addEventListener('submit', async
         rol: formData.get('rol')
     };
 
+    // Validar la extensión del correo
+    if (!validEmailExtensions.some(ext => data.mail.endsWith(ext))) {
+        showError('Correo no válido. Por favor use una extensión de correo válida.');
+        return;
+    }
+
     try {
         const response = await fetch('/singup', {
             method: 'POST',
@@ -91,11 +98,19 @@ document.querySelector('.formulario__register').addEventListener('submit', async
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            const errorMessage = await response.text();
-            showError(errorMessage);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            Swal.fire({
+                title: 'Usuario creado',
+                text: 'Usuario creado correctamente',
+                icon: 'success',
+                confirmButtonText: 'Ok'
+            }).then(() => {
+                window.location.href = '/login'; // Redirigir en caso de éxito
+            });
         } else {
-            window.location.href = '/login'; // Redirigir en caso de éxito
+            showError(result.message || 'Ocurrió un error al enviar el formulario.');
         }
     } catch (error) {
         showError('Ocurrió un error al enviar el formulario.');
@@ -108,59 +123,48 @@ function showError(message) {
     errorMessageDiv.style.display = 'block';
     setTimeout(() => {
         errorMessageDiv.style.display = 'none';
-    }, 2000);
+    }, 4000);
 }
 
+// log in
 
-const validEmailExtensions = ['@gmail.com', '@hotmail.com', '@misena.edu.co', '@soy.sena.edu.co'];
+document.getElementById('login-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-        document.getElementById('register-form').addEventListener('submit', async function (e) {
-            e.preventDefault(); // Prevenir el envío del formulario
+    const form = e.target;
+    const formData = new FormData(form);
 
-            const form = e.target;
-            const formData = new FormData(form);
+    const data = {
+        correo: formData.get('email'),
+        contrasena: formData.get('password')
+    };
 
-            const data = {
-                id: formData.get('id'),
-                names: formData.get('names'),
-                dress: formData.get('dress'),
-                phone: formData.get('phone'),
-                mail: formData.get('mail'),
-                pass: formData.get('pass'),
-                rol: formData.get('rol')
-            };
+    try {
+        const response = await axios.post('http://localhost:3000/api/login', data);
 
-            // Validar la extensión del correo
-            if (!validEmailExtensions.some(ext => data.mail.endsWith(ext))) {
-                showError('Correo no válido. Use una extensión válida como @gmail.com, @hotmail.com, @misena.edu.co, @soy.sena.edu.co.');
-                return;
-            }
-
-            try {
-                const response = await fetch('/singup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) {
-                    const errorMessage = await response.text();
-                    showError(errorMessage);
-                } else {
-                    window.location.href = '/'; // Redirigir en caso de éxito
-                }
-            } catch (error) {
-                showError('Ocurrió un error al enviar el formulario.');
-            }
-        });
-
-        function showError(message) {
-            const errorMessageDiv = document.getElementById('error-message');
-            errorMessageDiv.textContent = message;
-            errorMessageDiv.style.display = 'block';
-            setTimeout(() => {
-                errorMessageDiv.style.display = 'none';
-            }, 6000);
+        if (response.data.success) {
+            Swal.fire({
+                title: 'Inicio de sesión exitoso',
+                text: response.data.message,
+                icon: 'success',
+                confirmButtonText: 'Ok'
+            }).then(() => {
+                // Redirigir al usuario a otra página después de un inicio de sesión exitoso
+                window.location.href = '/home'; // Cambia esto a la página deseada
+            });
+        } else {
+            showError(response.data.message || 'Ocurrió un error al iniciar sesión.');
         }
+    } catch (error) {
+        showError('Ocurrió un error al iniciar sesión.');
+    }
+});
+
+function showError(message) {
+    const errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.textContent = message;
+    errorMessageDiv.style.display = 'block';
+    setTimeout(() => {
+        errorMessageDiv.style.display = 'none';
+    }, 2000);
+}

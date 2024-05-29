@@ -1,10 +1,12 @@
 // HOMEPAGE //
-import express from 'express';
+import { Router } from "express";
 import fetch from 'node-fetch';
 import axios from 'axios';
 import bcrypt from 'bcryptjs'
 
-const router = express.Router();
+import * as controller from '../controllers/singin.js';
+
+const router = Router();
 
 router.get('/', (req, res) => {
     res.render('home');
@@ -102,23 +104,23 @@ router.post('/singup', async (req, res) => {
 
         // Validar la extensión del correo
         if (!validEmailExtensions.some(ext => data.mail.endsWith(ext))) {
-            return res.status(400).send('Correo no válido. Use una extensión válida como @gmail.com, @hotmail.com, @misena.edu.co, @soy.sena.edu.co.');
+            return res.status(400).json({ success: false, message: 'Correo no válido. Use una extensión válida como @gmail.com, @hotmail.com, @misena.edu.co, @soy.sena.edu.co.' });
         }
 
         // Verificaciones
         const emailExists = await checkIfExists('correo', data.mail);
         if (emailExists) {
-            return res.status(400).send('Lo sentimos, este correo ya está registrado.');
+            return res.status(400).json({ success: false, message: 'Lo sentimos, este correo ya está registrado.' });
         }
 
         const idExists = await checkIfExists('identificacion', data.id);
         if (idExists) {
-            return res.status(400).send('Lo sentimos, esta identificación ya está registrada.');
+            return res.status(400).json({ success: false, message: 'Lo sentimos, esta identificación ya está registrada.' });
         }
 
         const phoneExists = await checkIfExists('telefono', data.phone);
         if (phoneExists) {
-            return res.status(400).send('Lo sentimos, este teléfono ya está registrado.');
+            return res.status(400).json({ success: false, message: 'Lo sentimos, este teléfono ya está registrado.' });
         }
 
         // Encriptar la contraseña
@@ -140,13 +142,16 @@ router.post('/singup', async (req, res) => {
         const response = await axios.post('http://localhost:3000/api/user', newUser);
         console.log('Usuario creado correctamente:', response.data);
 
-        // Redirigir al cliente a la página principal u otra página de tu elección
-        res.status(200).send('Usuario creado correctamente'); // Puedes cambiar la URL a la página que desees
+        // Enviar una respuesta indicando éxito
+        res.status(200).json({ success: true });
     } catch (error) {
         console.error('Error al crear el usuario:', error.response ? error.response.data : error.message);
-        res.status(500).send('Ocurrió un error al crear el usuario.'); // Envía un código de estado de error si ocurre algún problema
+        res.status(500).json({ success: false, message: 'Ocurrió un error al crear el usuario.' }); // Envía un código de estado de error si ocurre algún problema
     }
 });
 
+// sing in
+
+router.post('/login', controller.loginUser);
 
 export default router;
